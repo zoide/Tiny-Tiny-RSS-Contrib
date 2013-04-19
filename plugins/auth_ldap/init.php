@@ -1,6 +1,6 @@
 <?php
-/** 
- * Tiny Tiny RSS plugin for LDAP authentication 
+/**
+ * Tiny Tiny RSS plugin for LDAP authentication
  * @author hydrian (ben.tyger@tygerclan.net)
  * @copyright GPL2
  *  Requires php-ldap and PEAR Net::LDAP2
@@ -17,25 +17,24 @@
  *	define('LDAP_AUTH_BINDPW', 'ServiceAccountsPassword');
  *	define('LDAP_AUTH_BASEDN', 'dc=example,dc=com');
  * 	define('LDAP_AUTH_ANONYMOUSBEFOREBIND', FALSE);
- *	// ??? will be replaced with the entered username(escaped) at login 
+ *	// ??? will be replaced with the entered username(escaped) at login
  *	define('LDAP_AUTH_SEARCHFILTER', '(&(objectClass=person)(uid=???))');
  */
 
 /**
  *	Notes -
- *	LDAP search does not support follow ldap referals. Referals are disabled to 
- *	allow proper login.  This is particular to Active Directory.  
- * 
+ *	LDAP search does not support follow ldap referals. Referals are disabled to
+ *	allow proper login.  This is particular to Active Directory.
+ *
  *	Also group membership can be supported if the user object contains the
- *	the group membership via attributes.  The following LDAP servers can 
- *	support this.   
+ *	the group membership via attributes.  The following LDAP servers can
+ *	support this.
  * 	 * Active Directory
  *   * OpenLDAP support with MemberOf Overlay
  *
  */
 class Auth_Ldap extends Plugin implements IAuthModule {
 
-	private $link;
 	private $host;
 	private $base;
 
@@ -47,13 +46,12 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 	}
 
 	function init($host) {
-		$this->link = $host->get_link();
 		$this->host = $host;
-		$this->base = new Auth_Base($this->link);
+		$this->base = new Auth_Base();
 
 		$host->add_hook($host::HOOK_AUTH_USER, $this);
 	}
-	
+
 	private function _log($msg) {
 		trigger_error($msg, E_USER_WARNING);
 	}
@@ -64,7 +62,7 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 				trigger_error('auth_ldap requires PHP\'s PECL LDAP package installed.');
 				return FALSE;
 			}
-			if (!require_once('Net/LDAP2.php')) { 
+			if (!require_once('Net/LDAP2.php')) {
 				trigger_error('auth_ldap requires the PEAR package Net::LDAP2');
 				return FALSE;
 			}
@@ -85,7 +83,7 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 			}
 			$ldapConnParams['starttls']= defined('LDAP_AUTH_USETLS') ?
 				LDAP_AUTH_USETLS : FALSE;
-					
+
 			if (is_int($parsedURI['port'])) {
 				$ldapConnParams['port']=$parsedURI['port'];
 			}
@@ -105,7 +103,7 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 					$this->_log('Cound not bind service account: '.$binding->getMessage());
 					return FALSE;
 				}
-			} 
+			}
 			//Searching for user
 			$completedSearchFiler=str_replace('???',$login,LDAP_AUTH_SEARCHFILTER);
 			$filterObj=Net_LDAP2_Filter::parse($completedSearchFiler);
@@ -122,7 +120,7 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 			//Getting user's DN from search
 			$userEntry=$searchResults->shiftEntry();
 			$userDN=$userEntry->dn();
-			//Binding with user's DN. 
+			//Binding with user's DN.
 			$loginAttempt=$ldapConn->bind($userDN, $password);
 			$ldapConn->disconnect();
 			if ($loginAttempt === TRUE) {

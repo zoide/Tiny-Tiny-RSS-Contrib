@@ -1,7 +1,6 @@
 <?php
 class Pocket extends Plugin {
 
-	private $link;
 	private $host;
 
 	function about() {
@@ -11,7 +10,6 @@ class Pocket extends Plugin {
 	}
 
 	function init($host) {
-		$this->link = $host->get_link();
 		$this->host = $host;
 
 		$host->add_hook($host::HOOK_ARTICLE_BUTTON, $this);
@@ -33,9 +31,9 @@ class Pocket extends Plugin {
 	}
 
 	function getInfo() {
-		$id = db_escape_string($this->link, $_REQUEST['id']);
+		$id = db_escape_string($_REQUEST['id']);
 
-		$result = db_query($this->link, "SELECT title, link
+		$result = db_query("SELECT title, link
 				FROM ttrss_entries, ttrss_user_entries
 				WHERE id = '$id' AND ref_id = id AND owner_uid = " .$_SESSION['uid']);
 

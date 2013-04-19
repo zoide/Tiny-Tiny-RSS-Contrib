@@ -9,7 +9,6 @@
 */
 class Auth_Imap extends Plugin implements IAuthModule {
 
-	private $link;
 	private $host;
 	private $base;
 
@@ -21,9 +20,8 @@ class Auth_Imap extends Plugin implements IAuthModule {
 	}
 
 	function init($host) {
-		$this->link = $host->get_link();
 		$this->host = $host;
-		$this->base = new Auth_Base($this->link);
+		$this->base = new Auth_Base();
 
 		$host->add_hook($host::HOOK_AUTH_USER, $this);
 	}

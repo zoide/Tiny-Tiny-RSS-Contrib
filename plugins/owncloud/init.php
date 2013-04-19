@@ -2,7 +2,6 @@
 require_once "config.php";
 
 class OwnCloud extends Plugin {
-  private $link;
   private $host;
 
   function about() {
@@ -12,7 +11,6 @@ class OwnCloud extends Plugin {
   }
 
   function init($host) {
-    $this->link = $host->get_link();
     $this->host = $host;
 
     $host->add_hook($host::HOOK_ARTICLE_BUTTON, $this);
@@ -20,7 +18,7 @@ class OwnCloud extends Plugin {
   }
 
   function save() {
-    $owncloud_url = db_escape_string($this->link, $_POST["owncloud_url"]);
+    $owncloud_url = db_escape_string($_POST["owncloud_url"]);
     $this->host->set($this, "owncloud", $owncloud_url);
     echo "Value set to $owncloud_url";
   }
@@ -75,9 +73,9 @@ class OwnCloud extends Plugin {
   }
 
   function getOwnCloud() {
-    $id = db_escape_string($this->link, $_REQUEST['id']);
+    $id = db_escape_string($_REQUEST['id']);
 
-    $result = db_query($this->link, "SELECT title, link
+    $result = db_query("SELECT title, link
 		      FROM ttrss_entries, ttrss_user_entries
 		      WHERE id = '$id' AND ref_id = id AND owner_uid = " .$_SESSION['uid']);
 
