@@ -1,6 +1,6 @@
 <?php
-/** 
- * Tiny Tiny RSS plugin for LDAP authentication 
+/**
+ * Tiny Tiny RSS plugin for LDAP authentication
  * @author hydrian (ben.tyger@tygerclan.net)
  * @copyright GPL2
  *  Requires php-ldap and PEAR Net::LDAP2
@@ -18,37 +18,36 @@
  *	define('LDAP_AUTH_BINDPW', 'ServiceAccountsPassword');
  *	define('LDAP_AUTH_BASEDN', 'dc=example,dc=com');
  * 	define('LDAP_AUTH_ANONYMOUSBEFOREBIND', FALSE);
- *	// ??? will be replaced with the entered username(escaped) at login 
+ *	// ??? will be replaced with the entered username(escaped) at login
  *	define('LDAP_AUTH_SEARCHFILTER', '(&(objectClass=person)(uid=???))');
  *	// Optional configuration
- *	  
+ *
  *  define('LDAP_AUTH_SCHEMA_CACHE_ENABLE', TRUE);
- *    Enables Schema Caching (Recommended) 
+ *    Enables Schema Caching (Recommended)
  *  define('LDAP_AUTH_SCHEMA_CACHE_TIMEOUT', 86400);
- *    Max time a schema cache is kept (seconds) 
+ *    Max time a schema cache is kept (seconds)
  *  define('LDAP_AUTH_LOG_ATTEMPTS', FALSE);
  *    Enable Debug Logging
  *  define('LDAP_AUTH_DEBUG', FALSE);
- *    
- *    
- *    
+ *
+ *
+ *
  */
 
 /**
  *	Notes -
- *	LDAP search does not support follow ldap referals. Referals are disabled to 
- *	allow proper login.  This is particular to Active Directory.  
- * 
+ *	LDAP search does not support follow ldap referals. Referals are disabled to
+ *	allow proper login.  This is particular to Active Directory.
+ *
  *	Also group membership can be supported if the user object contains the
- *	the group membership via attributes.  The following LDAP servers can 
- *	support this.   
+ *	the group membership via attributes.  The following LDAP servers can
+ *	support this.
  * 	 * Active Directory
  *   * OpenLDAP support with MemberOf Overlay
  *
  */
 class Auth_Ldap extends Plugin implements IAuthModule {
 
-	private $link;
 	private $host;
 	private $base;
 
@@ -60,17 +59,16 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 	}
 
 	function init($host) {
-		$this->link = $host->get_link();
 		$this->host = $host;
-		$this->base = new Auth_Base($this->link);
+		$this->base = new Auth_Base();
 
 		$host->add_hook($host::HOOK_AUTH_USER, $this);
 	}
-	
+
 	private function _log($msg, $level = E_USER_WARNING) {
 		trigger_error($msg, $level);
 	}
-	
+
 	private function _logAttempt($username, $result) {
 		if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 			//check ip from share internet
@@ -84,33 +82,33 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 		else {
 			$ip=$_SERVER['REMOTE_ADDR'];
 		}
-		
+
 		return trigger_error('TT-RSS Login Attempt: user '.(string)$username.
 			' attempted to login ('.(string)$result.') from '.(string)$ip,
 			E_USER_NOTICE
-		);	
+		);
 	}
 
 	function authenticate($login, $password) {
 		if ($login && $password) {
-			
-	
-			
+
+
+
 			if (!function_exists('ldap_connect')) {
 				trigger_error('auth_ldap requires PHP\'s PECL LDAP package installed.');
 				return FALSE;
 			}
-			if (!require_once('Net/LDAP2.php')) { 
+			if (!require_once('Net/LDAP2.php')) {
 				trigger_error('auth_ldap requires the PEAR package Net::LDAP2');
 				return FALSE;
 			}
-			
+
 			$debugMode = defined('LDAP_AUTH_DEBUG') ?
 				LDAP_AUTH_DEBUG : FALSE;
-			
+
 			$anonymousBeforeBind=defined('LDAP_AUTH_ANONYMOUSBEFOREBIND') ?
 				LDAP_AUTH_ANONYMOUSBEFOREBIND : FALSE;
-			
+
 			$parsedURI=parse_url(LDAP_AUTH_SERVER_URI);
 			if ($parsedURI === FALSE) {
 				$this->_log('Could not parse LDAP_AUTH_SERVER_URI in config.php');
@@ -128,20 +126,20 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 			}
 			$ldapConnParams['starttls']= defined('LDAP_AUTH_USETLS') ?
 				LDAP_AUTH_USETLS : FALSE;
-					
+
 			if (is_int($parsedURI['port'])) {
 				$ldapConnParams['port']=$parsedURI['port'];
 			}
-			
+
 			$ldapSchemaCacheEnable= defined('LDAP_AUTH_SCHEMA_CACHE_ENABLE') ?
 				LDAP_AUTH_SCHEMA_CACHE_ENABLE : TRUE;
-			
+
 			$ldapSchemaCacheTimeout= defined('LDAP_AUTH_SCHEMA_CACHE_TIMEOUT') ?
 				LDAP_AUTH_SCHEMA_CACHE_TIMEOUT : 86400;
-			
-			$logAttempts= defined('LDAP_AUTH_LOG_ATTEMPTS') ? 
+
+			$logAttempts= defined('LDAP_AUTH_LOG_ATTEMPTS') ?
 				LDAP_AUTH_LOG_ATTEMPTS : FALSE;
-			
+
 			// Making connection to LDAP server
 			if (LDAP_AUTH_ALLOW_UNTRUSTED_CERT === TRUE) {
 				putenv('LDAPTLS_REQCERT=never');
@@ -158,8 +156,8 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 					$this->_log('Cound not bind service account: '.$binding->getMessage());
 					return FALSE;
 				}
-			} 
-			
+			}
+
 			//Cache LDAP Schema
 			if ($ldapSchemaCacheEnable) {
 				if (!sys_get_temp_dir()) {
@@ -189,7 +187,7 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 				$ldapConn->registerSchemaCache($schemaCacheObj);
 				$schemaCacheObj->storeSchema($ldapConn->schema());
 			}
-			
+
 			//Searching for user
 			$completedSearchFiler=str_replace('???',$login,LDAP_AUTH_SEARCHFILTER);
 			$filterObj=Net_LDAP2_Filter::parse($completedSearchFiler);
@@ -207,7 +205,7 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 			//Getting user's DN from search
 			$userEntry=$searchResults->shiftEntry();
 			$userDN=$userEntry->dn();
-			//Binding with user's DN. 
+			//Binding with user's DN.
 			$loginAttempt=$ldapConn->bind($userDN, $password);
 			$ldapConn->disconnect();
 			if ($loginAttempt === TRUE) {
