@@ -223,6 +223,10 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 		return false;
 	}
 
+	function api_version() {
+		return 2;
+	}
+
 }
 
 ?>

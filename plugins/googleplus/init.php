@@ -48,6 +48,9 @@ class GooglePlus extends Plugin {
 				"id" => $id));
 	}
 
+	function api_version() {
+		return 2;
+	}
 
 }
 ?>

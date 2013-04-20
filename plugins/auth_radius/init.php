@@ -69,6 +69,10 @@ class Auth_Radius extends Plugin implements IAuthModule {
 		return FALSE;
 	}
 
+	function api_version() {
+		return 2;
+	}
+
 }
 
 ?>

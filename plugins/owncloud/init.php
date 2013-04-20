@@ -90,5 +90,10 @@ class OwnCloud extends Plugin {
     print json_encode(array("title" => $title, "link" => $article_link,
 			    "id" => $id, "ownurl" => $own_url));
   }
+
+	function api_version() {
+		return 2;
+	}
+
 }
 ?>

@@ -41,5 +41,10 @@ class Flattr extends Plugin {
     }
     return $rv;
   }
+
+	function api_version() {
+		return 2;
+	}
+
 }
 ?>

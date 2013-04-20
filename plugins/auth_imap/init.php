@@ -44,6 +44,10 @@ class Auth_Imap extends Plugin implements IAuthModule {
 		return false;
 	}
 
+	function api_version() {
+		return 2;
+	}
+
 }
 
 ?>
