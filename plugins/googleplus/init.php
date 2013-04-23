@@ -1,6 +1,5 @@
 <?php
 class GooglePlus extends Plugin {
-	private $link;
 	private $host;
 
 	function init($host) {
@@ -32,7 +31,7 @@ class GooglePlus extends Plugin {
 	}
 
 	function getInfo() {
-		$id = db_escape_string($this->link, $_REQUEST['id']);
+		$id = db_escape_string($_REQUEST['id']);
 
 		$result = db_query("SELECT title, link
 				FROM ttrss_entries, ttrss_user_entries
