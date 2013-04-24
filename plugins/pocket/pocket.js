@@ -1,4 +1,5 @@
 	function shareArticleToPocket(id) {
+
 	try {
 		var query = "?op=pluginhandler&plugin=pocket&method=getInfo&id=" + param_escape(id);
 
@@ -17,7 +18,7 @@
 
 				var share_url = "https://getpocket.com/save?" +
 					"&title=" + param_escape(ti.title) +
-					"&url=" + param_escape(ti.link);
+					"&url=" + param_escape(ti.link.strip());
 
 				w.location.href = share_url;
 
