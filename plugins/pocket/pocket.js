@@ -1,11 +1,4 @@
 	function shareArticleToPocket(id) {
-		
-	// Add in case browser does not support trim
-	if(!String.prototype.trim) {
-	  String.prototype.trim = function () {
-		return this.replace(/^\s+|\s+$/g,'');
-	  };
-	}
 
 	try {
 		var query = "?op=pluginhandler&plugin=pocket&method=getInfo&id=" + param_escape(id);
@@ -25,7 +18,7 @@
 
 				var share_url = "https://getpocket.com/save?" +
 					"&title=" + param_escape(ti.title) +
-					"&url=" + param_escape(ti.link.trim());
+					"&url=" + param_escape(ti.link.strip());
 
 				w.location.href = share_url;
 
