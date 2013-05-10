@@ -137,6 +137,7 @@ a:hover {
 
 #article #article-content img {
 	max-width : 90%;
+	height : auto;
 }
 
 #content.move {
@@ -286,6 +287,7 @@ a:hover {
 
 #headlines ul#headlines-content div.content img {
 	max-width : 75%;
+	height : auto;
 }
 
 #headlines ul#headlines-content div.body {
