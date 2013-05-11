@@ -83,6 +83,8 @@ a:hover {
 	-webkit-transition: opacity 0.2s linear;
 	-moz-transition: opacity 0.2s linear;
 	transition: opacity 0.2s linear;
+
+	-webkit-overflow-scrolling: touch;
 }
 
 #article.visible {
@@ -137,6 +139,7 @@ a:hover {
 
 #article #article-content img {
 	max-width : 90%;
+	height : auto;
 }
 
 #content.move {
@@ -156,6 +159,8 @@ a:hover {
 	border-color : #88b0f0;
 	border-style : solid;
 	background : #eee;
+
+	-webkit-overflow-scrolling: touch;
 }
 
 #feeds ul#feeds-content img {
@@ -201,6 +206,8 @@ a:hover {
 	border-width : 0px 3px 0px 0px;
 	border-style : solid;
 	border-color : #88b0f0;
+
+	-webkit-overflow-scrolling: touch;
 }
 
 #headlines h1 a {
@@ -286,6 +293,7 @@ a:hover {
 
 #headlines ul#headlines-content div.content img {
 	max-width : 75%;
+	height : auto;
 }
 
 #headlines ul#headlines-content div.body {
