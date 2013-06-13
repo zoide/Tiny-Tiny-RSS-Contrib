@@ -12,22 +12,27 @@ class Feed_SN extends Plugin {
 	function init($host) {
 		$this->host = $host;
 
-		$host->add_hook($host::HOOK_FEED_PARSED, $this);
+		$host->add_hook($host::HOOK_FEED_FETCHED, $this);
 	}
 
-	function hook_feed_parsed($feed) {
-		if (strpos($feed->get_link(), 'www.salzburg.com') !== FALSE) {
+	function hook_feed_fetched($feed_data, $fetch_url, $owner_uid, $feed) {
+		if (strpos($fetch_url, 'www.salzburg.com') !== FALSE) {
 
-			_debug("feed_sn: Processing feed items");
+			_debug("feed_sn: Processing feed data");
 
-			$items = $feed->get_items();
-			foreach ($items as $item) {
-				$link = $item->get_link();
+			$doc = new DOMDocument();
+			$doc->loadXML($feed_data);
+			$xpath = new DOMXPath($doc);
+			$articles = $xpath->query("//channel/item");
+
+			// add guid retrieved from link
+			foreach ($articles as $article) {
+				$link = $article->getElementsByTagName('link')->item(0);
 				$id = preg_replace('/artikel\/.*-(\d+)\//', 'artikel/$1/', $link);
-				if (!$item->get_item_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'guid')) {
-					$item->data['child'][SIMPLEPIE_NAMESPACE_RSS_20]['guid'] = array(array( 'data' => $id ));
-				}
+				$article->appendChild($doc->createElement('guid', $id));
 			}
+
+			return $doc->saveXML();
 		}
 	}
 
