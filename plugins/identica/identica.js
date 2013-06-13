@@ -15,7 +15,7 @@
 			onComplete: function(transport) {
 				var ti = JSON.parse(transport.responseText);
 
-				var share_url = "http://identi.ca/index.php?action=bookmarkpopup&_=" + ts +
+				var share_url = ti.status_url+"/index.php?action=bookmarkpopup&_=" + ts +
 					"&title=" + param_escape(ti.title) +
 					"&url=" + param_escape(ti.link);
 
