@@ -18,6 +18,9 @@
  *	define('LDAP_AUTH_BINDPW', 'ServiceAccountsPassword');
  *	define('LDAP_AUTH_BASEDN', 'dc=example,dc=com');
  * 	define('LDAP_AUTH_ANONYMOUSBEFOREBIND', FALSE);
+ * 	define('LDAP_AUTH_GROUPDN', 'cn=GROUPNAME,ou=groups,dc=example,dc=com');
+ *	// ??? will be replaced with the User's DN (Gosa specifics) 
+ * 	define('LDAP_AUTH_GROUPFILTER', '(&(objectClass=gosaGroupOfNames)(member=???))');
  *	// ??? will be replaced with the entered username(escaped) at login
  *	define('LDAP_AUTH_SEARCHFILTER', '(&(objectClass=person)(uid=???))');
  *	// Optional configuration
