@@ -207,10 +207,17 @@ class Auth_Ldap extends Plugin implements IAuthModule {
 			$userDN=$userEntry->dn();
 			//Binding with user's DN.
 			$loginAttempt=$ldapConn->bind($userDN, $password);
+			//check the group
+			$grpFilter = str_replace('???',$userDN,LDAP_AUTH_GROUPFILTER); 
+			$grpFilterObj=Net_LDAP2_Filter::parse($grpFilter);
+			$grpSearchResult=$ldapConn->search(LDAP_AUTH_GROUPDN,$grpFilterObj);
 			$ldapConn->disconnect();
-			if ($loginAttempt === TRUE) {
+			if ($loginAttempt === TRUE && $grpSearchResult->count() > 0) { //both user authenticated and in the proper group
 				if ($logAttempts) $this->_logAttempt((string)$login, 'successful');
 				return $this->base->auto_create_user($login);
+			} elseif ($grpSearchResult->count() == 0) { //not in proper group
+				$this->_logAttempt((string)$login, 'not allowed (not in proper group)');
+				return FALSE;
 			} elseif ($loginAttempt->getCode() == 49) {
 				if ($logAttempts) $this->_logAttempt((string)$login, 'bad password');
 				return FALSE;
